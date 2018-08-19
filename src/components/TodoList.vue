@@ -10,7 +10,8 @@
                                     class="input is-large" 
                                     type="text" 
                                     placeholder="What needs to be done"
-                                    v-modal="newTodo"
+                                    v-model=newTodo
+                                    @keyup.enter="addTodo"
                                 >                               
                             </div>
                         </div>
@@ -41,6 +42,7 @@ export default {
   data () {
       return {
           newTodo: '',
+          idForTodo: 3,
           todos: [
               {
                   id: 1,
@@ -53,6 +55,22 @@ export default {
                   completed: true
               }
           ]
+      }
+  },
+  methods: {
+      addTodo () {
+        if (this.newTodo.trim().length == 0) {
+            return
+        }
+
+        this.todos.push({
+            id: this.idForTodo,
+            title: this.newTodo,
+            completed: false
+        })
+
+        this.newTodo = '',
+        this.idForTodo++
       }
   }
 }
