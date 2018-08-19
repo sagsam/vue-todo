@@ -40,6 +40,7 @@
                                         v-model="todo.title"
                                         @blur="doneEdit(todo)"
                                         @keyup.enter="doneEdit(todo)"
+                                        @keyup.esc="cancelEdit(todo)"
                                         v-focus
                                     >   
                                     <p class="subtitle">...</p>
@@ -57,60 +58,66 @@
 
 <script>
 export default {
-  name: 'TodoList',
-  data () {
-      return {
-          newTodo: '',
-          idForTodo: 3,
-          todos: [
-              {
-                  id: 1,
-                  title: 'Finish vue screencast',
-                  completed: false,
-                  editing: false
-              },
-              {
-                  id: 2,
-                  title: 'Finish eating',
-                  completed: true,
-                  editing: false
-              }
-          ]
-      }
-  },
-  directives: {
-    focus: {
-        // directive definition
-        inserted: function (el) {
-        el.focus()
+    name: 'TodoList',
+    data () {
+        return {
+            newTodo: '',
+            idForTodo: 3,
+            beforeEditCache: '',
+            todos: [
+                {
+                    id: 1,
+                    title: 'Finish vue screencast',
+                    completed: false,
+                    editing: false
+                },
+                {
+                    id: 2,
+                    title: 'Finish eating',
+                    completed: true,
+                    editing: false
+                }
+            ]
+        }
+    },
+    directives: {
+        focus: {
+            // directive definition
+            inserted: function (el) {
+            el.focus()
+            }
+        }
+    },
+    methods: {
+        cancelEdit (todo) {    
+            todo.title = this.beforeEditCache        
+            todo.editing = false
+        },
+        doneEdit (todo) {
+            todo.editing = false
+        },
+        editTodo (todo) {
+            this.beforeEditCache = todo.title
+            todo.editing = true
+        },
+        removeTodo (index) {
+            this.todos.splice(index, 1)
+        },
+        addTodo () {
+            if (this.newTodo.trim().length == 0) {
+                return
+            }
+
+            this.todos.push({
+                id: this.idForTodo,
+                title: this.newTodo,
+                completed: false
+            })
+
+            this.newTodo = '',
+            this.idForTodo++
         }
     }
-  },
-  methods: {
-      doneEdit (todo) {
-        todo.editing = false
-      },
-      editTodo (todo) {
-        todo.editing = true
-      },
-      removeTodo (index) {
-        this.todos.splice(index, 1)
-      },
-      addTodo () {
-        if (this.newTodo.trim().length == 0) {
-            return
-        }
-
-        this.todos.push({
-            id: this.idForTodo,
-            title: this.newTodo,
-            completed: false
-        })
-
-        this.newTodo = '',
-        this.idForTodo++
-      }
-  }
 }
 </script>
 
