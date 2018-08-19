@@ -1,7 +1,7 @@
 <template>
     <div class="card">
-        <div class="card-content">
-            <div class="content">                
+        <div class="card-content">            
+            <div class="">                
                 <div class="tile is-ancestor">
                     <div class="tile is-vertical">
                         <div class="tile">
@@ -14,11 +14,22 @@
                                     @keyup.enter="addTodo"
                                 >                               
                             </div>
-                        </div>
+                        </div>     
+                        <div class="tile">
+                            <div class="tile is-parent is-vertical">                            
+                                <div class="tabs is-fullwidth">
+                                    <ul>
+                                        <li :class="{'is-active': filter == 'all'}"><a @click="filter='all'">All</a></li>
+                                        <li :class="{'is-active': filter == 'active'}"><a @click="filter='active'">Active</a></li>
+                                        <li :class="{'is-active': filter == 'completed'}"><a @click="filter='completed'">Completed</a></li>
+                                    </ul>
+                                </div>                             
+                            </div>
+                        </div>                    
                         <div class="tile">
                             <div class="tile is-parent is-vertical">
                                 <article 
-                                    v-for="(todo, index) in todos" 
+                                    v-for="(todo, index) in todosFiltered" 
                                     :key="todo.id" 
                                     class="tile is-child notification is-primary"
                                 >
@@ -29,15 +40,15 @@
                                     <label class="checkbox">
                                         <input type="checkbox" v-model="todo.completed">
                                     </label>
-                                    <p 
+                                    <label
                                         v-if="!todo.editing"
                                         @dblclick="editTodo(todo)"
-                                        :class="{completed: todo.completed,title: true}">
+                                        :class="{completed: todo.completed}">
                                             {{todo.title}}  
-                                    </p>
+                                    </label>
                                     <input 
                                         v-else
-                                        class="input is-large" 
+                                        class="input is-inline" 
                                         type="text" 
                                         placeholder="What needs to be done"
                                         v-model="todo.title"
@@ -45,8 +56,7 @@
                                         @keyup.enter="doneEdit(todo)"
                                         @keyup.esc="cancelEdit(todo)"
                                         v-focus
-                                    >   
-                                    <p class="subtitle">...</p>
+                                    > <br>  
                                     <span :class="['tag', todo.completed ? 'is-success' : 'is-danger']">{{ todo.completed ? 'completed' : 'pending' }}</span>
                                 </article>
                             </div>
@@ -55,15 +65,13 @@
                 </div>
             </div>
         </div>
-         <footer class="card-footer">
+        <footer class="card-footer">
              <span class="card-footer-item">
                 <label class="checkbox ">
                     <input type="checkbox" :checked="!anyRemaining" @click="checkAllTodos">
                     Check all
                 </label>
              </span>            
-            <a href="#" class="card-footer-item">Save</a>
-            <a href="#" class="card-footer-item">Edit</a>
             <span href="#" class="card-footer-item">{{remaining}} item left.</span>
         </footer>
     </div>  
@@ -76,6 +84,7 @@ export default {
         return {
             newTodo: '',
             idForTodo: 3,
+            filter: 'all',
             beforeEditCache: '',
             todos: [
                 {
@@ -99,6 +108,15 @@ export default {
         },
         anyRemaining () {
             return this.remaining != 0
+        },
+        todosFiltered () {
+            if (this.filter == 'all') {
+                return this.todos
+            } else if (this.filter == 'active') {
+                return this.todos.filter(todo => !todo.completed)
+            } if (this.filter == 'completed') {
+               return this.todos.filter(todo => todo.completed)
+            }
         }
     },
     directives: {
