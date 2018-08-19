@@ -18,10 +18,14 @@
                         <div class="tile">
                             <div class="tile is-parent is-vertical">
                                 <article 
-                                    v-for="todo in todos" 
+                                    v-for="(todo, index) in todos" 
                                     :key="todo.id" 
                                     class="tile is-child notification is-primary"
                                 >
+                                    <button 
+                                        class="delete"
+                                        @click="removeTodo(index)"
+                                    ></button>
                                     <p class="title">{{todo.title}}...</p>
                                     <p class="subtitle">...</p>
                                     <span :class="['tag', todo.completed ? 'is-success' : 'is-danger']">{{ todo.completed ? 'completed' : 'pending' }}</span>
@@ -58,6 +62,9 @@ export default {
       }
   },
   methods: {
+      removeTodo (index) {
+        this.todos.splice(index, 1)
+      },
       addTodo () {
         if (this.newTodo.trim().length == 0) {
             return
