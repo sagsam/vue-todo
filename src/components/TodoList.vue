@@ -26,7 +26,22 @@
                                         class="delete"
                                         @click="removeTodo(index)"
                                     ></button>
-                                    <p class="title">{{todo.title}}...</p>
+                                    <p 
+                                        v-if="!todo.editing"
+                                        @dblclick="editTodo(todo)"
+                                        class="title">
+                                            {{todo.title}}...
+                                    </p>
+                                    <input 
+                                        v-else
+                                        class="input is-large" 
+                                        type="text" 
+                                        placeholder="What needs to be done"
+                                        v-model="todo.title"
+                                        @blur="doneEdit(todo)"
+                                        @keyup.enter="doneEdit(todo)"
+                                        v-focus
+                                    >   
                                     <p class="subtitle">...</p>
                                     <span :class="['tag', todo.completed ? 'is-success' : 'is-danger']">{{ todo.completed ? 'completed' : 'pending' }}</span>
                                 </article>
@@ -51,17 +66,33 @@ export default {
               {
                   id: 1,
                   title: 'Finish vue screencast',
-                  completed: false
+                  completed: false,
+                  editing: false
               },
               {
                   id: 2,
                   title: 'Finish eating',
-                  completed: true
+                  completed: true,
+                  editing: false
               }
           ]
       }
   },
+  directives: {
+    focus: {
+        // directive definition
+        inserted: function (el) {
+        el.focus()
+        }
+    }
+  },
   methods: {
+      doneEdit (todo) {
+        todo.editing = false
+      },
+      editTodo (todo) {
+        todo.editing = true
+      },
       removeTodo (index) {
         this.todos.splice(index, 1)
       },
