@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 
 // Require the main Sass manifest file
-require('./assets/sass/main.scss');
+import './assets/sass/main.scss';
 
 Vue.config.productionTip = false
 
