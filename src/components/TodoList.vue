@@ -84,7 +84,7 @@ export default {
         focus: {
             // directive definition
             inserted: function (el) {
-            el.focus()
+                el.focus()
             }
         }
     },
@@ -94,6 +94,9 @@ export default {
             todo.editing = false
         },
         doneEdit (todo) {
+            if (todo.title.trim().length == 0) {
+                todo.title = this.beforeEditCache
+            }
             todo.editing = false
         },
         editTodo (todo) {
