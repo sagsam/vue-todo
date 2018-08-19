@@ -94,6 +94,9 @@ export default {
             todo.editing = false
         },
         doneEdit (todo) {
+            if (todo.title.trim() == '') {
+                todo.title = this.beforeEditCache
+            }
             todo.editing = false
         },
         editTodo (todo) {
