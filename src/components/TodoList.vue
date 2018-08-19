@@ -26,11 +26,14 @@
                                         class="delete"
                                         @click="removeTodo(index)"
                                     ></button>
+                                    <label class="checkbox">
+                                        <input type="checkbox" v-model="todo.completed">
+                                    </label>
                                     <p 
                                         v-if="!todo.editing"
                                         @dblclick="editTodo(todo)"
-                                        class="title">
-                                            {{todo.title}}...
+                                        :class="{completed: todo.completed,title: true}">
+                                            {{todo.title}}  
                                     </p>
                                     <input 
                                         v-else
@@ -47,12 +50,22 @@
                                     <span :class="['tag', todo.completed ? 'is-success' : 'is-danger']">{{ todo.completed ? 'completed' : 'pending' }}</span>
                                 </article>
                             </div>
-                        </div>
-                        
+                        </div>                        
                     </div>
                 </div>
             </div>
         </div>
+         <footer class="card-footer">
+             <span class="card-footer-item">
+                <label class="checkbox ">
+                    <input type="checkbox" :checked="!anyRemaining" @click="checkAllTodos">
+                    Check all
+                </label>
+             </span>            
+            <a href="#" class="card-footer-item">Save</a>
+            <a href="#" class="card-footer-item">Edit</a>
+            <span href="#" class="card-footer-item">{{remaining}} item left.</span>
+        </footer>
     </div>  
 </template>
 
@@ -80,6 +93,14 @@ export default {
             ]
         }
     },
+    computed: {
+        remaining () {
+            return this.todos.filter(todo => !todo.completed).length
+        },
+        anyRemaining () {
+            return this.remaining != 0
+        }
+    },
     directives: {
         focus: {
             // directive definition
@@ -89,6 +110,11 @@ export default {
         }
     },
     methods: {
+        checkAllTodos (event) {
+            this.todos.forEach(todo => {
+                todo.completed = event.target.checked
+            })
+        },
         cancelEdit (todo) {    
             todo.title = this.beforeEditCache        
             todo.editing = false
@@ -100,7 +126,7 @@ export default {
             todo.editing = false
         },
         editTodo (todo) {
-            this.beforeEditCache = todo.title
+             this.beforeEditCache = todo.title
             todo.editing = true
         },
         removeTodo (index) {
@@ -125,5 +151,8 @@ export default {
 </script>
 
 <style scoped>
-
+.completed {
+    text-decoration: line-through;
+    color: grey
+}
 </style>
