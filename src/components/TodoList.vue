@@ -4,6 +4,11 @@
             <div class="tile is-vertical">
                 <div class="tile">
                     <div class="tile is-parent is-vertical">                            
+                       <h3 class="title is-3 has-text-centered">vue-todo-app  </h3>               
+                    </div>
+                </div>  
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">                            
                         <input 
                             class="input is-large" 
                             type="text" 

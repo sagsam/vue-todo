@@ -4,7 +4,7 @@
       <div class="columns is-mobile is-centered">
         <div class="column is-half ">
           <section class="is-flex is-horizontal-center">
-            <figure class="image is-128x128">
+            <figure class="image is-96x96">
               <img src="./assets/logo.png" alt="Vue logo">
             </figure>
           </section>
