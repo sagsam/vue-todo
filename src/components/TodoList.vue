@@ -1,80 +1,92 @@
 <template>
-    <div class="card">
-        <div class="card-content">            
-            <div class="">                
-                <div class="tile is-ancestor">
-                    <div class="tile is-vertical">
-                        <div class="tile">
-                            <div class="tile is-parent is-vertical">                            
-                                <input 
-                                    class="input is-large" 
-                                    type="text" 
-                                    placeholder="What needs to be done"
-                                    v-model=newTodo
-                                    @keyup.enter="addTodo"
-                                >                               
-                            </div>
-                        </div>     
-                        <div class="tile">
-                            <div class="tile is-parent is-vertical">                            
-                                <div class="tabs is-fullwidth">
-                                    <ul>
-                                        <li :class="{'is-active': filter == 'all'}"><a @click="filter='all'">All</a></li>
-                                        <li :class="{'is-active': filter == 'active'}"><a @click="filter='active'">Active</a></li>
-                                        <li :class="{'is-active': filter == 'completed'}"><a @click="filter='completed'">Completed</a></li>
-                                    </ul>
-                                </div>                             
-                            </div>
-                        </div>                    
-                        <div class="tile">
-                            <div class="tile is-parent is-vertical">
-                                <article 
-                                    v-for="(todo, index) in todosFiltered" 
-                                    :key="todo.id" 
-                                    class="tile is-child notification is-primary"
-                                >
-                                    <button 
-                                        class="delete"
-                                        @click="removeTodo(index)"
-                                    ></button>
-                                    <label class="checkbox">
+    <div id="todo-list">
+        <div class="tile is-ancestor">
+            <div class="tile is-vertical">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">                            
+                        <input 
+                            class="input is-large" 
+                            type="text" 
+                            placeholder="What needs to be done"
+                            v-model=newTodo
+                            @keyup.enter="addTodo"
+                        >                               
+                    </div>
+                </div>     
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">                            
+                        <div class="tabs is-fullwidth">
+                            <ul>
+                                <li :class="{'is-active': filter == 'all'}"><a @click="filter='all'">All</a></li>
+                                <li :class="{'is-active': filter == 'active'}"><a @click="filter='active'">Active</a></li>
+                                <li :class="{'is-active': filter == 'completed'}"><a @click="filter='completed'">Completed</a></li>
+                            </ul>
+                        </div>                             
+                    </div>
+                </div>     
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">                            
+                        <div id="todo-card-0" 
+                            data-preview-id="0" 
+                            class="card"
+                            v-for="(todo, index) in todosFiltered" 
+                            :key="todo.id"
+                        >
+                            <div class="card-content">
+                                <div class="todo-header">
+                                    <span class="todo-remove">
+                                        <a @click="removeTodo(index)">
+                                            <span class="icon has-text-danger">
+                                                <i class="fa fa-trash"></i>
+                                            </span>
+                                        </a>
+                                    </span>
+                                    <div>
+                                        <span :class="['tag', todo.completed ? 'is-success' : 'is-danger']">{{ todo.completed ? 'completed' : 'pending' }}</span>
+                                    </div>
+                                    <label class="checkbox">                                          
                                         <input type="checkbox" v-model="todo.completed">
-                                    </label>
-                                    <label
-                                        v-if="!todo.editing"
-                                        @dblclick="editTodo(todo)"
-                                        :class="{completed: todo.completed}">
-                                            {{todo.title}}  
-                                    </label>
-                                    <input 
-                                        v-else
-                                        class="input is-inline" 
-                                        type="text" 
-                                        placeholder="What needs to be done"
-                                        v-model="todo.title"
-                                        @blur="doneEdit(todo)"
-                                        @keyup.enter="doneEdit(todo)"
-                                        @keyup.esc="cancelEdit(todo)"
-                                        v-focus
-                                    > <br>  
-                                    <span :class="['tag', todo.completed ? 'is-success' : 'is-danger']">{{ todo.completed ? 'completed' : 'pending' }}</span>
-                                </article>
+                                        <a 
+                                            v-if="!todo.editing"
+                                            @dblclick="editTodo(todo)"
+                                            :class="{completed: todo.completed}"
+                                        >
+                                            <span class="todo-label">
+                                                <strong>  {{todo.title}}</strong>
+                                            </span>
+                                        </a>
+                                        <div v-else class="control">
+                                            <input                                                
+                                                class="input is-inline is-small" 
+                                                type="text" 
+                                                placeholder="What needs to be done"
+                                                v-model="todo.title"
+                                                @blur="doneEdit(todo)"
+                                                @keyup.enter="doneEdit(todo)"
+                                                @keyup.esc="cancelEdit(todo)"
+                                                v-focus
+                                            >
+                                        </div>
+                                        
+                                    </label>                            
+                                </div>
                             </div>
-                        </div>                        
+                            <!-- only show this footer after if it is the last todo  -->
+                            <footer v-if="todos.length === index+1" class="card-footer">
+                                <span class="card-footer-item">
+                                    <label class="checkbox ">
+                                        <input type="checkbox" :checked="!anyRemaining" @click="checkAllTodos">
+                                        Check all
+                                    </label>
+                                </span>            
+                                <span href="#" class="card-footer-item">{{remaining}} item left.</span>
+                            </footer>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <footer class="card-footer">
-             <span class="card-footer-item">
-                <label class="checkbox ">
-                    <input type="checkbox" :checked="!anyRemaining" @click="checkAllTodos">
-                    Check all
-                </label>
-             </span>            
-            <span href="#" class="card-footer-item">{{remaining}} item left.</span>
-        </footer>
-    </div>  
+    </div>
 </template>
 
 <script>
@@ -169,8 +181,28 @@ export default {
 </script>
 
 <style scoped>
-.completed {
+.completed .todo-label{
     text-decoration: line-through;
-    color: grey
+    color: grey;    
+}
+#todo-list .todo-label{
+    margin-left: 5px;
+}
+#todo-list .todo-header {
+    position: relative;
+    padding-right: 24px;
+}
+#todo-list .todo-remove {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -13px;
+}
+#todo-list .checkbox {
+    line-height: 1.7;
+}
+#todo-list .checkbox input[type="checkbox"], #todo-list .todo-label, #todo-list .control {
+    display: inline-block;
+    vertical-align: middle;
 }
 </style>
